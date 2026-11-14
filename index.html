@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>شجرة الطاعة</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f4f7ee;--card:#fff;--text:#1f2a1c;--muted:#5f6d5a;--line:#d6dfcc;--leaf:#4f9a4a;--leaf2:#3d8139;--apple:#d93a30;--trunk:#7a5230;--btn:#2f6f2b;--btntext:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141a12;--card:#1e271b;--text:#e8efe3;--muted:#9fae99;--line:#33402e;--leaf:#3c7c38;--leaf2:#2f6a2c;--apple:#e5493e;--trunk:#8a6038;--btn:#5fb25a;--btntext:#0f1a0e}}
+:root[data-theme="dark"]{--bg:#141a12;--card:#1e271b;--text:#e8efe3;--muted:#9fae99;--line:#33402e;--leaf:#3c7c38;--leaf2:#2f6a2c;--apple:#e5493e;--trunk:#8a6038;--btn:#5fb25a;--btntext:#0f1a0e}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Roboto,sans-serif}
+main{max-width:680px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:1.5rem;margin:0 0 4px}h2{margin:0 0 8px;font-size:1.15rem}
+p.sub{color:var(--muted);margin:0 0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
+label{display:block;font-weight:600;margin:10px 0 6px}
+input[type=text],input[type=password],textarea,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--text);font:inherit}
+.classes{display:grid;gap:8px}
+.classes label{display:flex;gap:10px;align-items:center;font-weight:500;margin:0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;cursor:pointer}
+button{background:var(--btn);color:var(--btntext);border:0;border-radius:10px;padding:11px 16px;font:inherit;font-weight:600;cursor:pointer;margin-top:12px}
+button.sec{background:transparent;color:var(--text);border:1px solid var(--line)}
+button.danger{background:var(--apple);color:#fff}
+button:disabled{opacity:.5}
+.hidden{display:none!important}
+.err{color:var(--apple);margin-top:8px;min-height:1.2em}
+.badge{display:inline-block;background:var(--leaf);color:#fff;border-radius:99px;padding:2px 10px;font-size:.85rem}
+.tabs{display:flex;gap:6px;margin:12px 0;flex-wrap:wrap}
+.tabs button{margin:0;flex:1;padding:9px 8px;background:transparent;color:var(--text);border:1px solid var(--line)}
+.tabs button.on{background:var(--btn);color:var(--btntext);border-color:var(--btn)}
+.tree{display:flex;flex-direction:column;align-items:center;margin:8px 0 16px}
+.canopy{width:100%;min-height:200px;background:radial-gradient(ellipse at 50% 40%,var(--leaf),var(--leaf2));border-radius:50% 50% 46% 46%/58% 58% 42% 42%;padding:34px 28px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-content:center}
+.trunk{width:34px;height:90px;background:var(--trunk);border-radius:6px 6px 0 0}
+.ground{width:70%;height:10px;background:var(--trunk);opacity:.5;border-radius:99px}
+.leaf{background:rgba(255,255,255,.9);color:#16301a;border-radius:99px;padding:5px 12px;font-size:.9rem;max-width:100%;margin:0;font-weight:600}
+.apple{width:92px;height:92px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff7a6e,var(--apple));color:#fff;font-size:1.6rem;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:0;margin:0;box-shadow:0 3px 8px rgba(0,0,0,.3)}
+.apple small{font-size:.7rem;font-weight:600}
+.panel{border-inline-start:4px solid var(--apple)}
+.panel ol{margin:8px 0 0;padding-inline-start:22px}
+.panel li{margin-bottom:8px}
+.panel li span{display:block;color:var(--muted);font-size:.92rem;white-space:pre-wrap;word-break:break-word}
+.empty{color:#fff;opacity:.9}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.row:last-child{border-bottom:0}
+.row button{margin:0;padding:7px 12px}
+.muted{color:var(--muted)}
+</style>
+</head>
+<body>
+<main>
+<h1>🌳 شجرة الطاعة</h1>
+<p class="sub" id="sub">جارٍ التحميل…</p>
+
+<div id="nodb" class="card hidden">الموقع غير مُعدّ بعد. (إعدادات Firebase ناقصة)</div>
+<div id="gone" class="card hidden">تم حذف حسابك وكل بياناتك. شكراً لك 🌿<br><button id="backHome" type="button">العودة لصفحة الدخول</button></div>
+
+<section id="setup" class="card hidden">
+  <h2>إنشاء حساب جديد</h2>
+  <label for="nm">الاسم</label>
+  <input type="text" id="nm" maxlength="40" autocomplete="off">
+  <label>في أي فصل أنت؟</label>
+  <div class="classes" id="classes"></div>
+  <label for="pw1">كلمة السر (٦ أحرف على الأقل)</label>
+  <input type="password" id="pw1" autocomplete="new-password">
+  <label for="pw2">أعد كتابة كلمة السر</label>
+  <input type="password" id="pw2" autocomplete="new-password">
+  <button id="create">إنشاء الحساب</button>
+  <div class="err" id="serr"></div>
+  <button class="sec" id="toLogin" type="button">لدي حساب — تسجيل الدخول</button>
+</section>
+
+<section id="login" class="card hidden">
+  <h2>تسجيل الدخول</h2>
+  <label for="lnm">الاسم</label>
+  <input type="text" id="lnm" maxlength="40" autocomplete="username">
+  <label for="lpw">كلمة السر</label>
+  <input type="password" id="lpw" autocomplete="current-password">
+  <button id="loginBtn">دخول</button>
+  <div class="err" id="lerr"></div>
+  <button class="sec" id="toSetup" type="button">إنشاء حساب جديد</button>
+</section>
+
+<section id="app" class="hidden">
+  <div class="row" style="border:0;padding:0"><div><strong id="who"></strong> <span class="badge" id="cls"></span></div><button class="sec" id="out" type="button">تسجيل الخروج</button></div>
+  <div class="tabs" id="tabs">
+    <button data-t="mine" class="on">شجرتي</button>
+    <button data-t="class">فصلي</button>
+    <button data-t="gifts">الهدايا <span id="gbadge"></span></button>
+    <button data-t="acct">حسابي</button>
+  </div>
+
+  <div id="t-mine">
+    <div class="tree"><div class="canopy" id="canopy"></div><div class="trunk"></div><div class="ground"></div></div>
+    <div id="panel"></div>
+    <div class="card">
+      <h2>إضافة صفة</h2>
+      <label for="en">الصفة</label>
+      <input type="text" id="en" maxlength="40">
+      <button id="add">أضف إلى شجرتي</button>
+      <div class="err" id="aerr"></div>
+      <p class="sub" id="count" style="margin:8px 0 0"></p>
+    </div>
+  </div>
+
+  <div id="t-class" class="hidden">
+    <div class="card"><h2 id="chead"></h2><div id="clist"></div></div>
+    <div id="cview" class="hidden">
+      <h2 id="cname"></h2>
+      <div class="tree"><div class="canopy" id="canopy2"></div><div class="trunk"></div><div class="ground"></div></div>
+      <div id="panel2"></div>
+    </div>
+  </div>
+
+  <div id="t-gifts" class="hidden">
+    <div class="card"><h2>طلبات هدايا وصلتك</h2><div id="gin"></div></div>
+    <div class="card">
+      <h2>إرسال صفة كهدية</h2>
+      <label for="gcls">الفصل</label><select id="gcls"></select>
+      <label for="grec">الشخص</label><select id="grec"></select>
+      <label for="gtext">اكتب الصفة</label><input type="text" id="gtext" maxlength="40">
+      <button id="gsend">أرسل طلب الهدية</button>
+      <div class="err" id="gerr"></div>
+      <p class="muted" style="margin:8px 0 0">عند موافقة المستلم تُضاف الصفة إلى شجرته. الصفة المُهداة جديدة وليست من صفاتك.</p>
+    </div>
+    <div class="card"><h2>طلباتي المرسلة</h2><div id="gout"></div></div>
+  </div>
+
+  <div id="t-acct" class="hidden">
+    <div class="card">
+      <h2>حذف الحساب</h2>
+      <p class="muted" style="margin-top:0">سيتم حذف حسابك وشجرتك نهائياً ولا يمكن التراجع.</p>
+      <label for="dpw">اكتب كلمة السر للتأكيد</label>
+      <input type="password" id="dpw" autocomplete="current-password">
+      <button class="danger" id="del">حذف حسابي</button>
+      <div class="err" id="derr"></div>
+    </div>
+    <button class="sec" id="lock">قفل الحساب</button>
+  </div>
+</section>
+</main>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,setPersistence,browserSessionPersistence,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,deleteUser,reauthenticateWithCredential,EmailAuthProvider,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getFirestore,doc,getDoc,setDoc,deleteDoc,updateDoc,collection,addDoc,query,where,getDocs,onSnapshot} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// ===== Firebase settings (paste yours here) =====
+const firebaseConfig={
+  apiKey:"PASTE_API_KEY",
+  authDomain:"PASTE_AUTH_DOMAIN",
+  projectId:"PASTE_PROJECT_ID",
+  storageBucket:"PASTE_STORAGE_BUCKET",
+  messagingSenderId:"PASTE_SENDER_ID",
+  appId:"PASTE_APP_ID"
+};
+// ================================================
+
+const CLASSES=["ابو فام","مارجرجس","الامير تادرس","الشهيد ابسيرون","مارمينا"];
+const PER=5;
+const $=id=>document.getElementById(id);
+const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+const show=(id,on=true)=>$(id).classList.toggle("hidden",!on);
+const rid=()=>Math.random().toString(36).slice(2,10);
+const STAT={pending:"قيد الانتظار",accepted:"تمت الموافقة",declined:"تم الرفض"};
+const norm=n=>n.trim().replace(/\s+/g," ");
+let auth,db,uid=null,me=null,items=[],inG=[],outG=[],unsubs=[],q=Promise.resolve(),busy=false;
+const st1={open:null},st2={open:null},cache={};
+
+async function emailFor(name){
+  const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(norm(name).toLowerCase()));
+  return "u"+[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("").slice(0,32)+"@shagara-app.com";
+}
+function authMsg(e){
+  const c=e&&e.code||"";
+  if(c==="auth/email-already-in-use")return "هذا الاسم مستخدم، اختر اسماً آخر.";
+  if(c==="auth/invalid-credential"||c==="auth/wrong-password"||c==="auth/user-not-found"||c==="auth/invalid-login-credentials")return "الاسم أو كلمة السر غير صحيحة.";
+  if(c==="auth/too-many-requests")return "محاولات كثيرة، انتظر قليلاً ثم حاول مرة أخرى.";
+  if(c==="auth/network-request-failed")return "تحقق من الاتصال بالإنترنت.";
+  return "حدث خطأ، حاول مرة أخرى.";
+}
+
+function drawTree(canopy,panel,list,st){
+  canopy.textContent="";panel.textContent="";
+  const full=Math.floor(list.length/PER);
+  for(let a=0;a<full;a++){
+    const b=el("button","apple");b.append("🍎");b.appendChild(el("small",null,PER+" صفات"));
+    b.onclick=()=>{st.open=st.open===a?null:a;drawTree(canopy,panel,list,st)};
+    canopy.appendChild(b);
+  }
+  list.slice(full*PER).forEach(it=>canopy.appendChild(el("span","leaf",it.name)));
+  if(!list.length)canopy.appendChild(el("span","empty","الشجرة فارغة"));
+  if(st.open!==null&&st.open<full){
+    const d=el("div","card panel");d.appendChild(el("strong",null,"التفاحة "+(st.open+1)));
+    const ol=el("ol");
+    list.slice(st.open*PER,(st.open+1)*PER).forEach(it=>{const li=el("li");li.appendChild(el("strong",null,it.name));ol.appendChild(li)});
+    d.appendChild(ol);panel.appendChild(d);
+  }
+}
+function renderMine(){
+  drawTree($("canopy"),$("panel"),items,st1);
+  const left=PER-(items.length%PER);
+  $("count").textContent=items.length+" صفة · باقي "+left+" لتكوين التفاحة التالية";
+}
+function mutate(fn){
+  const p=q.then(async()=>{
+    const next=fn(items.slice());if(!next)return;
+    await setDoc(doc(db,"users",uid),{name:me.name,cls:me.cls,items:next});
+    items=next;renderMine();
+  });
+  q=p.catch(()=>{});return p;
+}
+
+async function loadClass(cls,force){
+  const c=cache[cls];
+  if(!force&&c&&Date.now()-c.t<15000)return c.list;
+  const s=await getDocs(query(collection(db,"users"),where("cls","==",cls)));
+  const list=s.docs.map(d=>({id:d.id,name:d.data().name,items:Array.isArray(d.data().items)?d.data().items:[]}));
+  cache[cls]={t:Date.now(),list};return list;
+}
+async function renderClass(){
+  $("chead").textContent="فصل "+me.cls;show("cview",false);
+  const box=$("clist");box.textContent="";box.appendChild(el("p","muted","جارٍ التحميل…"));
+  try{
+    const list=await loadClass(me.cls);
+    $("chead").textContent="أعضاء فصل "+me.cls+" ("+list.length+")";
+    box.textContent="";
+    list.forEach(m=>{
+      const r=el("div","row");r.appendChild(el("span",null,m.name+(m.id===uid?" (أنت)":"")));
+      if(m.id!==uid){
+        const b=el("button","sec","عرض الشجرة");
+        b.onclick=()=>{st2.open=null;$("cname").textContent="شجرة "+m.name;show("cview");drawTree($("canopy2"),$("panel2"),m.items,st2);$("cview").scrollIntoView({behavior:"smooth"})};
+        r.appendChild(b);
+      }
+      box.appendChild(r);
+    });
+  }catch(e){box.textContent="تعذر تحميل الفصل."}
+}
+async function renderGiftForm(){
+  const cs=$("gcls"),rec=$("grec");
+  if(!cs.options.length){CLASSES.forEach(c=>{const o=el("option",null,c);o.value=c;cs.appendChild(o)});cs.value=me.cls}
+  rec.textContent="";
+  try{
+    const list=(await loadClass(cs.value)).filter(m=>m.id!==uid);
+    if(!list.length){const o=el("option",null,"لا يوجد أشخاص في هذا الفصل");o.value="";rec.appendChild(o)}
+    list.forEach(m=>{const o=el("option",null,m.name);o.value=m.id;o.dataset.name=m.name;rec.appendChild(o)});
+  }catch(e){}
+}
+$("gcls").onchange=renderGiftForm;
+
+function renderGifts(){
+  const gin=$("gin");gin.textContent="";
+  const pend=inG.filter(g=>g.status==="pending");
+  $("gbadge").textContent=pend.length?"("+pend.length+")":"";
+  if(!pend.length)gin.appendChild(el("p","muted","لا توجد طلبات."));
+  pend.forEach(g=>{
+    const r=el("div","row");
+    r.appendChild(el("strong",null,g.fromName+" يريد أن يهديك صفة: "+g.item.name));
+    const bx=el("div");const ok=el("button",null,"قبول"),no=el("button","sec","رفض");
+    ok.onclick=async()=>{ok.disabled=no.disabled=true;
+      try{
+        await mutate(l=>l.concat([{id:rid(),name:g.item.name}]));
+        await updateDoc(doc(db,"gifts",g.id),{status:"accepted"});
+      }catch(e){alert("حدث خطأ، حاول مرة أخرى");ok.disabled=no.disabled=false}};
+    no.onclick=async()=>{ok.disabled=no.disabled=true;try{await updateDoc(doc(db,"gifts",g.id),{status:"declined"})}catch(e){ok.disabled=no.disabled=false}};
+    bx.append(ok," ",no);r.appendChild(bx);gin.appendChild(r);
+  });
+  const gout=$("gout");gout.textContent="";
+  const outs=outG.slice().sort((a,b)=>b.ts-a.ts).slice(0,15);
+  if(!outs.length)gout.appendChild(el("p","muted","لم ترسل أي طلب."));
+  outs.forEach(g=>{const r=el("div","row");r.appendChild(el("span",null,g.item.name+" ← "+g.toName));r.appendChild(el("span","badge",STAT[g.status]||g.status));gout.appendChild(r)});
+}
+function subscribe(){
+  unsubs.push(onSnapshot(query(collection(db,"gifts"),where("to","==",uid)),s=>{inG=s.docs.map(d=>Object.assign({id:d.id},d.data()));renderGifts()}));
+  unsubs.push(onSnapshot(query(collection(db,"gifts"),where("from","==",uid)),s=>{outG=s.docs.map(d=>Object.assign({id:d.id},d.data()));renderGifts()}));
+}
+async function enter(id){
+  const s=await getDoc(doc(db,"users",id));
+  if(!s.exists())throw new Error("no-profile");
+  uid=id;me={name:s.data().name,cls:s.data().cls};
+  items=Array.isArray(s.data().items)?s.data().items:[];
+  show("setup",false);show("login",false);show("gone",false);show("app");
+  $("sub").textContent="كل ٥ صفات تتحول إلى تفاحة.";
+  $("who").textContent=me.name;$("cls").textContent=me.cls;
+  st1.open=null;show("cview",false);
+  document.querySelector("#tabs button[data-t=mine]").click();
+  renderMine();subscribe();
+}
+const goLogin=()=>{show("app",false);show("setup",false);show("gone",false);show("login");$("lerr").textContent="";$("sub").textContent="سجّل الدخول بالاسم وكلمة السر."};
+async function lock(){
+  unsubs.forEach(u=>u());unsubs=[];uid=null;me=null;items=[];inG=[];outG=[];$("gcls").textContent="";
+  try{await signOut(auth)}catch(e){}
+  goLogin();
+}
+
+$("create").onclick=async()=>{
+  const name=norm($("nm").value),r=document.querySelector("input[name=cls]:checked"),p1=$("pw1").value,p2=$("pw2").value,e=$("serr");
+  if(!name)return e.textContent="من فضلك اكتب اسمك.";
+  if(!r)return e.textContent="من فضلك اختر فصلك.";
+  if(p1.length<6)return e.textContent="كلمة السر يجب ألا تقل عن ٦ أحرف.";
+  if(p1!==p2)return e.textContent="كلمتا السر غير متطابقتين.";
+  if(busy)return;busy=true;e.textContent="";
+  try{
+    const cred=await createUserWithEmailAndPassword(auth,await emailFor(name),p1);
+    try{await setDoc(doc(db,"users",cred.user.uid),{name,cls:r.value,items:[]})}
+    catch(x){await deleteUser(cred.user);throw x}
+    delete cache[r.value];
+    await enter(cred.user.uid);
+    ["nm","pw1","pw2"].forEach(i=>$(i).value="");
+    document.querySelectorAll("input[name=cls]").forEach(x=>x.checked=false);
+  }catch(x){e.textContent=authMsg(x)}
+  finally{busy=false}
+};
+$("loginBtn").onclick=async()=>{
+  const name=norm($("lnm").value),pw=$("lpw").value,e=$("lerr");
+  if(!name||!pw)return e.textContent="اكتب الاسم وكلمة السر.";
+  if(busy)return;busy=true;e.textContent="";
+  try{
+    const cred=await signInWithEmailAndPassword(auth,await emailFor(name),pw);
+    await enter(cred.user.uid);$("lpw").value="";$("lnm").value="";
+  }catch(x){e.textContent=authMsg(x)}
+  finally{busy=false}
+};
+$("add").onclick=async()=>{
+  const name=$("en").value.trim();
+  if(!name)return $("aerr").textContent="اكتب الصفة.";
+  if(busy)return;busy=true;$("aerr").textContent="";
+  try{await mutate(l=>l.concat([{id:rid(),name}]));$("en").value="";delete cache[me.cls]}
+  catch(e){$("aerr").textContent="تعذر الحفظ، حاول مرة أخرى."}
+  finally{busy=false}
+};
+$("gsend").onclick=async()=>{
+  const sel=$("grec"),to=sel.value,name=$("gtext").value.trim(),e=$("gerr");
+  if(!to)return e.textContent="اختر الشخص.";
+  if(!name)return e.textContent="اكتب الصفة التي تريد إهداءها.";
+  e.textContent="";
+  try{
+    await addDoc(collection(db,"gifts"),{from:uid,fromName:me.name,to,toName:sel.selectedOptions[0].dataset.name||"",item:{name},status:"pending",ts:Date.now()});
+    $("gtext").value="";
+  }catch(x){e.textContent="تعذر إرسال الطلب."}
+};
+$("del").onclick=async()=>{
+  const e=$("derr");e.textContent="";
+  if(!$("dpw").value)return e.textContent="اكتب كلمة السر.";
+  try{
+    const u=auth.currentUser;
+    await reauthenticateWithCredential(u,EmailAuthProvider.credential(u.email,$("dpw").value));
+    if(!confirm("هل أنت متأكد من حذف حسابك نهائياً؟"))return;
+    unsubs.forEach(x=>x());unsubs=[];
+    for(const g of inG.concat(outG))await deleteDoc(doc(db,"gifts",g.id));
+    await deleteDoc(doc(db,"users",uid));
+    await deleteUser(u);
+    delete cache[me.cls];$("dpw").value="";uid=null;me=null;items=[];
+    show("app",false);show("gone");$("sub").textContent="";
+  }catch(x){e.textContent=authMsg(x)}
+};
+$("lock").onclick=lock;$("out").onclick=lock;$("backHome").onclick=goLogin;
+$("toSetup").onclick=()=>{show("login",false);show("setup");$("serr").textContent="";$("sub").textContent="أنشئ حساباً جديداً."};
+$("toLogin").onclick=goLogin;
+$("tabs").onclick=e=>{
+  const t=e.target.closest("button");if(!t)return;
+  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b===t));
+  ["mine","class","gifts","acct"].forEach(k=>show("t-"+k,k===t.dataset.t));
+  if(t.dataset.t==="class")renderClass();
+  if(t.dataset.t==="gifts")renderGiftForm();
+};
+
+function init(){
+  CLASSES.forEach(c=>{const l=el("label");const r=el("input");r.type="radio";r.name="cls";r.value=c;l.append(r,c);$("classes").appendChild(l)});
+  if(firebaseConfig.apiKey.startsWith("PASTE")){show("nodb");$("sub").textContent="";return}
+  const app=initializeApp(firebaseConfig);
+  auth=getAuth(app);db=getFirestore(app);
+  setPersistence(auth,browserSessionPersistence).catch(()=>{});
+  const off=onAuthStateChanged(auth,async u=>{
+    off();
+    if(u){try{await enter(u.uid);return}catch(e){}}
+    goLogin();
+  });
+}
+init();
+</script>
+</body>
+</html>
